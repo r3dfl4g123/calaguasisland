@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calaguas Travel Agency</title>
+
+<style>
+body { margin:0; font-family: Arial; }
+header { background:#0077b6; color:white; padding:15px; text-align:center; }
+.hero { background:url('https://upload.wikimedia.org/wikipedia/commons/6/65/Calaguas_Islands.jpg') center/cover; height:300px; display:flex; align-items:center; justify-content:center; color:white; font-size:30px; font-weight:bold; }
+.container { padding:20px; }
+.packages { display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:20px; }
+.card { border:1px solid #ccc; padding:15px; border-radius:10px; box-shadow:0 2px 5px rgba(0,0,0,0.1); }
+.card img { width:100%; border-radius:10px; }
+.gallery { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; }
+.gallery img { width:100%; border-radius:10px; }
+input, select, textarea { width:100%; padding:10px; margin:5px 0; }
+button { background:#0077b6; color:white; border:none; padding:10px; cursor:pointer; border-radius:5px; }
+footer { text-align:center; padding:10px; background:#222; color:white; }
+.admin { background:#f4f4f4; padding:15px; margin-top:20px; }
+</style>
+</head>
+<body>
+
+<header>
+<h1>Calaguas Travel Agency</h1>
+</header>
+
+<div class="hero">Explore Calaguas Island 🌴</div>
+
+<div class="container">
+
+<h2>Packages</h2>
+<div class="packages">
+<div class="card">
+<img src="https://upload.wikimedia.org/wikipedia/commons/6/65/Calaguas_Islands.jpg">
+<h3>2 Days 1 Night</h3>
+<p>₱2,500</p>
+</div>
+<div class="card">
+<img src="https://upload.wikimedia.org/wikipedia/commons/6/65/Calaguas_Islands.jpg">
+<h3>3 Days 2 Nights</h3>
+<p>₱3,500</p>
+</div>
+</div>
+
+<h2>Gallery</h2>
+<div class="gallery">
+<img src="https://upload.wikimedia.org/wikipedia/commons/6/65/Calaguas_Islands.jpg">
+<img src="https://upload.wikimedia.org/wikipedia/commons/6/65/Calaguas_Islands.jpg">
+<img src="https://upload.wikimedia.org/wikipedia/commons/6/65/Calaguas_Islands.jpg">
+</div>
+
+<h2>Book Now</h2>
+<form onsubmit="saveBooking(event)">
+<input type="text" id="name" placeholder="Full Name" required>
+<input type="email" id="email" placeholder="Email" required>
+<input type="number" id="persons" placeholder="Persons" required>
+<select id="package" required>
+<option value="">Select Package</option>
+<option>2D1N - ₱2,500</option>
+<option>3D2N - ₱3,500</option>
+</select>
+<textarea id="notes" placeholder="Notes"></textarea>
+<button type="submit">Submit Booking</button>
+</form>
+
+<h2>GCash Payment</h2>
+<p>Send payment to:</p>
+<h3>0912-345-6789</h3>
+<p>After payment, send screenshot via email.</p>
+
+<div class="admin">
+<h2>Admin Panel (Local Only)</h2>
+<ul id="bookingList"></ul>
+</div>
+
+</div>
+
+<footer>© 2026 Calaguas Travel Agency</footer>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js"></script>
+
+<script>
+// 🔥 PALITAN MO ITO NG FIREBASE CONFIG MO
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyCkEt6YoAhBrU55Ta6BRk7kpGDfQQkG97U",
+  authDomain: "calaguasisland-f5a46.firebaseapp.com",
+  projectId: "calaguasisland-f5a46",
+  storageBucket: "calaguasisland-f5a46.firebasestorage.app",
+  messagingSenderId: "280058010450",
+  appId: "1:280058010450:web:13bd83ee663a724fe6b88b",
+  measurementId: "G-FSXTLY3YHY"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+function saveBooking(e) {
+ e.preventDefault();
+
+ const data = {
+   name: document.getElementById('name').value,
+   email: document.getElementById('email').value,
+   persons: document.getElementById('persons').value,
+   package: document.getElementById('package').value,
+   notes: document.getElementById('notes').value
+ };
+
+ db.ref('bookings').push(data);
+ alert('Booking saved!');
+ loadBookings();
+}
+
+function loadBookings() {
+ const list = document.getElementById('bookingList');
+ list.innerHTML = '';
+
+ db.ref('bookings').on('value', snapshot => {
+   list.innerHTML = '';
+   snapshot.forEach(child => {
+     const li = document.createElement('li');
+     li.textContent = child.val().name + ' - ' + child.val().package;
+     list.appendChild(li);
+   });
+ });
+}
+
+loadBookings();
+</script>
+
+</body>
+</html>
